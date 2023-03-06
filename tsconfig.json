@@ -3,6 +3,8 @@
     "module": "es2020",
     "target": "es2020",
 
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
     "sourceMap": true,
 
     "allowJs": true,
@@ -13,5 +15,10 @@
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "draggable-windows/**/*.js",
+    "draggable-windows/**/*.ts",
+    "draggable-windows/**/*.html"
   ]
 }

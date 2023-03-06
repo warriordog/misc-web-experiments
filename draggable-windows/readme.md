@@ -3,7 +3,7 @@
 Prototype (not production-ready) implementation of HTML windows.
 Supports drag, resize, and scroll operations.
 Windows are z-sorted and background windows are hidden from screen readers.
+Windows can be created and closed at-will, with no practical limitation.
 
-Open/close operations are not (currently) implemented, but would be trivial to add.
-Scrolling is untested but should work.
-Before using, make sure to replace the monkey-patched functions with regular implementations.
+This implementation is based on WebComponents.
+An [older, worse version](v1/windows.js) is also available.

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Windows</title>
+    <link rel="stylesheet" href="HWindow.css">
+    <script src="HWindowElement.js" type="module" async></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body, p, h1, h2, h3, h4, h5, h6, ul {
+            margin: 0;
+        }
+
+        body {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+
+            padding: 10px;
+
+            overflow: hidden;
+            background-color: teal;
+
+            font-family: Tahoma, Verdana, sans-serif;
+        }
+
+        #infoWindow {
+            width: 50em;
+        }
+    </style>
+
+    <script type="module">
+        import './HWindowElement.js';
+
+        const button = document.querySelector('#newWindowButton')
+        if (button) {
+            button.addEventListener('click', () => {
+                /** @type {HWindowElement} */
+                const win = document.createElement('h-window');
+                win.windowTitle = 'New Window';
+                win.body.innerHTML = '<p>You just made a new window!<br>Try moving it around and interacting with other windows.</p>';
+
+                document.querySelector('body').append(win);
+                win.activate();
+            });
+        }
+
+        // Pre-arrange the windows
+        const windows = document.querySelectorAll('h-window');
+        for (let i = 0; i < windows.length; i++) {
+            const offset = (i + 1) * 50;
+            const win = windows[i];
+
+            win.move(offset, offset);
+        }
+    </script>
+</head>
+<body>
+    <noscript>JavaScript is required for this project</noscript>
+
+    <button id="newWindowButton">New Window</button>
+
+    <h-window window-title="Older Versions">
+        <p>
+            This version of HTML Windows is based on Web Components.<br>
+            An alternate (but older, worse, and less featured) prototype is also available.<br>
+            You can <a href="v1/test.html" target="_blank">access it here</a>.
+        </p>
+    </h-window>
+
+    <h-window window-title="Test Window">
+        <p>
+            Hello, world!<br>
+            This is a sample HTML window.
+        </p>
+    </h-window>
+
+    <h-window window-title="Information" id="infoWindow">
+        <h3>This is a prototype of a windowing system for HTML.</h3>
+        <p>
+            Try interacting with these windows! You can move and resize them at will.
+            Click and drag on the titlebar to move a window, and drag the bottom-right corner to resize.
+            You can close any window by clicking the close button (X), and the New Window button (top-left corner) will spawn a new one.
+            If a window becomes too small to hold its content, it will become scrollable automatically.
+        </p>
+        <br>
+        <p>
+            Please keep in mind that this is an experiment, not a production-ready library!
+            Effort has been made to support some number of older browsers, and the window system should work fairly well with screen readers.
+            But this code has not been written with the care and testing necessary for a real library.
+            Feel free to use some or all of this for your own projects, but remember that <em>this is just a prototype!</em>
+        </p>
+        <br>
+        <div>
+            More Information:
+            <ul>
+                <li><a href="https://github.com/warriordog/misc-web-experiments/blob/master/draggable-windows/readme.md" target="_blank">Documentation</a></li>
+                <li><a href="https://github.com/warriordog/misc-web-experiments/tree/master/draggable-windows" target="_blank">Source Code</a></li>
+                <li><a href="https://github.com/warriordog/misc-web-experiments/blob/master/license/license" target="_blank">License</a></li>
+            </ul>
+        </div>
+        <br>
+        <div>
+            Next Steps:
+            <ul>
+                <li>Improved API - restrict resize, close, etc.</li>
+                <li>Size limits - force wrapping</li>
+                <li>Revisit SR support - may need to remove aria-hidden or add SR-only nav</li>
+            </ul>
+        </div>
+    </h-window>
+</body>
+</html>

@@ -1,0 +1,43 @@
+h-window {
+    border: 2px solid dimgray;
+    background-color: white;
+
+    resize: both;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    position: absolute;
+}
+
+.h-window-header {
+    background-color: darkblue;
+    color: white;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.h-window-header .window-title {
+    flex: 1;
+    font-size: 100%;
+    padding: 2px;
+}
+
+.h-window-header .close-button {
+    margin: 0;
+    padding: 2px;
+    border: 1px solid black;
+    background-color: dimgray;
+    color: white;
+}
+
+.h-window-body {
+    overflow: auto;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+}
