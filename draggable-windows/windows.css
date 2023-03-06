@@ -1,0 +1,49 @@
+body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+    background-color: teal;
+}
+
+body, p, h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+.window {
+    border: 2px solid dimgray;
+    background-color: white;
+
+    resize: both;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    position: absolute;
+}
+
+.window > header {
+    background-color: darkblue;
+    color: white;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.window > header h2 {
+    flex: 1;
+    font-size: 100%;
+    padding: 2px;
+}
+
+.window > .body {
+    overflow: visible;
+    padding: 10px;
+}
