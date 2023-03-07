@@ -6,6 +6,12 @@ import { extractSlotContent, fillSlots } from "./psuedoSlots.js";
  * @property {number} offsetY
  */
 
+/**
+ * @typedef ClientEvent
+ * @property {number} clientX
+ * @property {number} clientY
+ */
+
 export class HWindowElement extends HTMLElement {
     constructor() {
         super();
@@ -19,12 +25,6 @@ export class HWindowElement extends HTMLElement {
 
         /** @type {undefined | WindowDrag} */
         this._drag = undefined;
-
-        // These are needed to properly unlink document events
-        /** @type {(e: MouseEvent) => void} */
-        this._endDragAdapter = e => this._endDrag(e);
-        /** @type {(e: MouseEvent) => void} */
-        this._moveDragAdapter = e => this._moveDrag(e);
 
         // Create all components, but leave un-initialized
         this._title = document.createElement('h2');
@@ -52,7 +52,16 @@ export class HWindowElement extends HTMLElement {
 
         this._header.classList.add('h-window-header');
         this._header.append(this._title, headerSlot, this._closeButton);
-        this._header.addEventListener('mousedown', e => this._startDrag(e));
+        this._header.addEventListener('mousedown', e => {
+            this._startDrag(e);
+            e.preventDefault();
+        });
+        this._header.addEventListener('touchstart', e => {
+            for (let touch of e.touches) {
+                this._startDrag(touch);
+            }
+            e.preventDefault();
+        });
 
         const bodySlot = document.createElement('slot');
 
@@ -64,6 +73,7 @@ export class HWindowElement extends HTMLElement {
         this.addEventListener('focusin', () => this.activate());
         this.addEventListener('focus', () => this.activate());
         this.addEventListener('mousedown', () => this.activate());
+        this.addEventListener('touchstart', () => this.activate());
 
         // Template is fully built, now we populate slots
         fillSlots(this, slotContent);
@@ -141,7 +151,7 @@ export class HWindowElement extends HTMLElement {
     }
 
     /**
-     * @param {MouseEvent} e
+     * @param {ClientEvent} e
      * @private
      */
     _startDrag(e) {
@@ -154,12 +164,11 @@ export class HWindowElement extends HTMLElement {
         }
 
         this._header.style.cursor = 'dragging';
-        e.preventDefault();
     }
 
 
     /**
-     * @param {MouseEvent} e
+     * @param {ClientEvent} e
      * @private
      */
     _endDrag(e) {
@@ -171,7 +180,7 @@ export class HWindowElement extends HTMLElement {
 
 
     /**
-     * @param {MouseEvent} e
+     * @param {ClientEvent} e
      * @private
      */
     _moveDrag(e) {
@@ -224,8 +233,10 @@ export class HWindowElement extends HTMLElement {
      * @private
      */
     _connect(doc) {
-        doc.addEventListener('mousemove', this._moveDragAdapter);
-        doc.addEventListener('mouseup', this._endDragAdapter);
+        doc.addEventListener('mousemove', this._mouseMoveAdapter);
+        doc.addEventListener('mouseup', this._mouseUpAdapter);
+        doc.addEventListener('touchmove', this._touchMoveAdapter);
+        doc.addEventListener('touchend', this._touchEndAdapter);
     }
 
     /**
@@ -233,8 +244,42 @@ export class HWindowElement extends HTMLElement {
      * @private
      */
     _disconnect(doc) {
-        doc.removeEventListener('mousemove', this._moveDragAdapter);
-        doc.removeEventListener('mouseup', this._endDragAdapter);
+        doc.removeEventListener('mousemove', this._mouseMoveAdapter);
+        doc.removeEventListener('mouseup', this._mouseUpAdapter);
+        doc.removeEventListener('touchmove', this._touchMoveAdapter);
+        doc.removeEventListener('touchend', this._touchEndAdapter);
+    }
+
+    /**
+     * @param {MouseEvent} e
+     * @private
+     */
+    _mouseUpAdapter = e => this._endDrag(e);
+
+    /**
+     * @param {MouseEvent} e
+     * @private
+     */
+    _mouseMoveAdapter = e => this._moveDrag(e);
+
+    /**
+     * @param {TouchEvent} e
+     * @private
+     */
+    _touchMoveAdapter = e => {
+        for (let touch of e.changedTouches) {
+            this._moveDrag(touch);
+        }
+    }
+
+    /**
+     * @param {TouchEvent} e
+     * @private
+     */
+    _touchEndAdapter = e => {
+        for (let touch of e.changedTouches) {
+            this._endDrag(touch);
+        }
     }
 
     /**
