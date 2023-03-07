@@ -41,6 +41,16 @@ export class HWindowElement extends HTMLElement {
 
         this._title.classList.add('window-title');
         this._title.innerText = this._windowTitle;
+        this._title.addEventListener('mousedown', e => {
+            this._startDrag(e);
+            e.preventDefault();
+        });
+        this._title.addEventListener('touchstart', e => {
+            for (let touch of e.touches) {
+                this._startDrag(touch);
+            }
+            e.preventDefault();
+        });
 
         const headerSlot = document.createElement('slot');
         headerSlot.name = 'header';
@@ -52,16 +62,6 @@ export class HWindowElement extends HTMLElement {
 
         this._header.classList.add('h-window-header');
         this._header.append(this._title, headerSlot, this._closeButton);
-        this._header.addEventListener('mousedown', e => {
-            this._startDrag(e);
-            e.preventDefault();
-        });
-        this._header.addEventListener('touchstart', e => {
-            for (let touch of e.touches) {
-                this._startDrag(touch);
-            }
-            e.preventDefault();
-        });
 
         const bodySlot = document.createElement('slot');
 
