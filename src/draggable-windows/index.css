@@ -1,0 +1,26 @@
+* {
+    box-sizing: border-box;
+}
+
+body, p, h1, h2, h3, h4, h5, h6, ul {
+    margin: 0;
+}
+
+body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    padding: 10px;
+
+    overflow: hidden;
+    background-color: teal;
+
+    font-family: Tahoma, Verdana, sans-serif;
+}
+
+.wm:not(.wm-none) #infoWindow {
+    width: 50em;
+}

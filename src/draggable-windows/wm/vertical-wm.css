@@ -1,0 +1,10 @@
+.vertical-wm {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.vertical-wm > h-window {
+    resize: vertical;
+    position: initial;
+}
