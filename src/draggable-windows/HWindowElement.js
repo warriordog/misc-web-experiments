@@ -5,14 +5,22 @@ import { extractSlotContent, fillSlots } from "./psuedoSlots.js";
  * @typedef {import('./HWindowElement').WindowDrag} WindowDrag
  */
 
+/** @type {import("./HWindowElement.js").ResizableLookup} */
+const resizeableMap = {
+    both: 'both',
+    none: 'none',
+    vertical: 'vertical',
+    horizontal: 'horizontal'
+}
+
 export class HWindowElement extends HTMLElement {
     constructor() {
         super();
         this._isConstructed = false;
 
-        // TODO these need to be inverted - default state is ON and therefore no attribute
-        this._resizable = true;
-        this._closable = true;
+        this._resizable = 'both';
+        this._disableMove = false;
+        this._disableClose = false;
         this._zIndex = 0;
         this._windowTitle = '';
 
@@ -85,19 +93,25 @@ export class HWindowElement extends HTMLElement {
     }
     set resizable(value) {
         this._resizable = value;
-        this.toggleAttribute('resizable', value);
-
-        this.style.resize = value ? 'both' : 'none';
+        this.setAttribute('resizable', value);
     }
 
-    get closable() {
-        return this._closable;
+    get disableMove() {
+        return this._disableMove;
     }
-    set closable(value) {
-        this._closable = value;
-        this.toggleAttribute('closable', value);
+    set disableMove(value) {
+        this._disableMove = value;
+        this.toggleAttribute('disable-move', value);
+    }
 
-        this._closeButton.disabled = !value;
+    get disableClose() {
+        return this._disableClose;
+    }
+    set disableClose(value) {
+        this._disableClose = value;
+        this.toggleAttribute('disable-close', value);
+
+        this._closeButton.disabled = value;
     }
 
     get windowTitle() {
@@ -119,9 +133,6 @@ export class HWindowElement extends HTMLElement {
     }
 
     close() {
-        if (!this._closable)
-            return;
-
         if (this.isConnected) {
             this.remove();
             activateNewWindow(this.ownerDocument, null);
@@ -144,10 +155,22 @@ export class HWindowElement extends HTMLElement {
     }
 
     /**
+     * @param {number} height
+     * @param {number} width
+     */
+    resize(height, width) {
+        this.style.height = `${height}px`;
+        this.style.width = `${width}px`;
+    }
+
+    /**
      * @param {ClientPosition} e
      * @private
      */
     _startDrag(e) {
+        if (this._disableMove)
+            return;
+
         if (!this._drag) {
             const bounds = this.getBoundingClientRect();
             this._drag = {
@@ -165,6 +188,11 @@ export class HWindowElement extends HTMLElement {
      * @private
      */
     _endDrag(e) {
+        if (this._disableMove) {
+            this._header.style.cursor = 'initial';
+            return;
+        }
+
         this._moveDrag(e);
 
         this._drag = undefined;
@@ -178,6 +206,8 @@ export class HWindowElement extends HTMLElement {
      */
     _moveDrag(e) {
         if (!this._drag)
+            return;
+        if (this._disableMove)
             return;
 
         const newTop = e.clientY - this._drag.offsetY;
@@ -280,7 +310,7 @@ export class HWindowElement extends HTMLElement {
      * (An attribute's old or new value is considered to be null when the attribute is added or removed, respectively.)
      * https://html.spec.whatwg.org/multipage/custom-elements.html
      *
-     * @param {'resizable' | 'closable' | 'window-title'} name
+     * @param {'resizable' | 'disable-close' | 'disable-move' | 'window-title'} name
      * @param {string | null} oldValue
      * @param {string | null} newValue
      */
@@ -288,10 +318,16 @@ export class HWindowElement extends HTMLElement {
         if (oldValue === newValue)
             return;
 
-        if (name === 'resizable')
-            this.resizable = newValue !== null;
-        else if (name === 'closable')
-            this.closable = newValue !== null;
+        if (name === 'resizable') {
+            if (newValue === null)
+                this.resizable = 'both';
+            else
+                this.resizable = resizeableMap[newValue] || 'both';
+        }
+        else if (name === 'disable-close')
+            this.disableClose = newValue !== null;
+        else if (name === 'disable-move')
+            this.disableMove = newValue !== null;
         else if (name === 'window-title')
             this.windowTitle = newValue || '';
         else
@@ -299,7 +335,7 @@ export class HWindowElement extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return [ 'resizable', 'closable', 'window-title' ];
+        return [ 'resizable', 'disable-close', 'disable-move', 'window-title' ];
     }
 }
 

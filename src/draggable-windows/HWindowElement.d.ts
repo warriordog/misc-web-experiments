@@ -4,14 +4,22 @@
  */
 export class HWindowElement extends HTMLElement {
     /**
-     * If true, the window can be resized.
+     * Sets the available resize options.
+     * Defaults to "both".
      */
-    resizable: boolean;
+    resizable: ResizableValue;
 
     /**
-     * If true, the window titlebar includes a close button.
+     * If true, disables the drag function.
+     * Does not apply to move() function.
      */
-    closable: boolean;
+    disableMove: boolean;
+
+    /**
+     * If true, disables the close button.
+     * Does not apply to close() function.
+     */
+    disableClose: boolean;
 
     /**
      * String to display in the window's titlebar
@@ -39,9 +47,9 @@ export class HWindowElement extends HTMLElement {
     close(): void;
 
     /**
-     * Brings the window to the front of any other windows
+     * Sets the window to a specified size
      */
-    activate(): void;
+    resize(height: number, width: number): void;
 
     /**
      * Moves the window to a specified position
@@ -49,7 +57,15 @@ export class HWindowElement extends HTMLElement {
      * @param left Distance from the left of the screen
      */
     move(top: number, left: number): void;
+
+    /**
+     * Brings the window to the front of any other windows
+     */
+    activate(): void;
 }
+
+export type ResizableValue = 'none' | 'both' | 'horizontal' | 'vertical';
+export type ResizableLookup = Record<string, ResizableValue>;
 
 export interface WindowDrag {
     readonly offsetX: number;
