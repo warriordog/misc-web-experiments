@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HTML Windows</title>
     <link rel="stylesheet" href="HWindow.css">
-
+    <script type="module" src="index.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -34,32 +34,6 @@
             width: 50em;
         }
     </style>
-
-    <script type="module">
-        import './HWindowElement.js';
-
-        const button = document.querySelector('#newWindowButton')
-        if (button) {
-            button.addEventListener('click', () => {
-                /** @type {HWindowElement} */
-                const win = document.createElement('h-window');
-                win.windowTitle = 'New Window';
-                win.body.innerHTML = '<p>You just made a new window!<br>Try moving it around and interacting with other windows.</p>';
-
-                document.querySelector('body').append(win);
-                win.activate();
-            });
-        }
-
-        // Pre-arrange the windows
-        const windows = document.querySelectorAll('h-window');
-        for (let i = 0; i < windows.length; i++) {
-            const offset = (i + 1) * 50;
-            const win = windows[i];
-
-            win.move(offset, offset);
-        }
-    </script>
 </head>
 <body>
     <noscript>JavaScript is required for this project</noscript>

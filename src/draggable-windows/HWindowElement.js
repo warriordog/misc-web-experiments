@@ -1,15 +1,8 @@
 import { extractSlotContent, fillSlots } from "./psuedoSlots.js";
 
 /**
- * @typedef WindowDrag
- * @property {number} offsetX
- * @property {number} offsetY
- */
-
-/**
- * @typedef ClientEvent
- * @property {number} clientX
- * @property {number} clientY
+ * @typedef {import('./HWindowElement').ClientPosition} ClientPosition
+ * @typedef {import('./HWindowElement').WindowDrag} WindowDrag
  */
 
 export class HWindowElement extends HTMLElement {
@@ -151,7 +144,7 @@ export class HWindowElement extends HTMLElement {
     }
 
     /**
-     * @param {ClientEvent} e
+     * @param {ClientPosition} e
      * @private
      */
     _startDrag(e) {
@@ -168,7 +161,7 @@ export class HWindowElement extends HTMLElement {
 
 
     /**
-     * @param {ClientEvent} e
+     * @param {ClientPosition} e
      * @private
      */
     _endDrag(e) {
@@ -180,7 +173,7 @@ export class HWindowElement extends HTMLElement {
 
 
     /**
-     * @param {ClientEvent} e
+     * @param {ClientPosition} e
      * @private
      */
     _moveDrag(e) {
@@ -319,11 +312,13 @@ function activateNewWindow(doc, newActive) {
     // New active window (if provided) is automatically moved to the end (top).
     // A bit of a hack, but it works.
     const windows = Array
-        .from(/** @type {NodeListOf<HWindowElement>} */(doc.querySelectorAll('h-window')))
+        .from(doc.querySelectorAll('h-window'))
         .sort((w1, w2) => {
             if (w1 === w2) return 0;
             if (w1 === newActive) return 1;
             if (w2 === newActive) return -1;
+            if (w1 === null) return 1;
+            if (w2 === null) return -1;
             return w1.zIndex - w2.zIndex;
         });
 
